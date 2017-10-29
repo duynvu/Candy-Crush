@@ -10,7 +10,7 @@ public class Board {
     int s1, s2;
     Random rand = new Random();
 
-    public Board() {
+   public Board() {
         create();
         while (checkTrue()) {
         }
@@ -18,7 +18,13 @@ public class Board {
         System.out.println("Ready to get input.");
         getInput();
         swap(s1, s2);
-       printBoard();
+        if(checkPosition(i1,i2)) {
+            System.out.println("pos1");
+        }
+        if(checkPosition(i3,i4)) {
+            System.out.println("pos2");
+        }
+        printBoard();
     }
 
     public void create() {
@@ -76,6 +82,7 @@ public class Board {
         //Check horizontal
         for(int i=0; i<SIZE; i++) {
             for(int j=0;j<SIZE-2; j++) {
+
                 int count=1;
                 int k=j;
                 while(board[i][k].getColor() == board[i][k+1].getColor()) {
@@ -143,3 +150,194 @@ public class Board {
     }
 
 }
+
+public boolean checkEndGame() {
+        // Check for 2x3
+        // check the pattern [i][j]-[i+1][j+1]-[i][j+2]
+        for(int i = 0; i < SIZE-1; i++) {
+            for(int j = 0; j<SIZE-2; j++) {
+                if ((board[i][j].getColor() == board[i+1][j+1].getColor()) && (board[i][j].getColor() == board[i][j+2].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i-1][j+1]-[i][j+2]
+        for(int i = 1; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-2; j++) {
+                if ((board[i][j].getColor() == board[i-1][j+1].getColor()) && (board[i][j].getColor() == board[i][j+2].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i][j+1]-[i+1][j+2]
+        for(int i = 0; i < SIZE-1; i++) {
+            for(int j = 0; j<SIZE-2; j++) {
+                if ((board[i][j].getColor() == board[i][j+1].getColor()) && (board[i][j].getColor() == board[i+1][j+2].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i][j+1]-[i-1][j+2]
+        for(int i = 1; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-2; j++) {
+                if ((board[i][j].getColor() == board[i][j+1].getColor()) && (board[i][j].getColor() == board[i+1][j+2].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+1][j+1]-[i+1][j+2]
+        for(int i = 0; i < SIZE-1; i++) {
+            for(int j = 0; j<SIZE-2; j++) {
+                if ((board[i][j].getColor() == board[i+1][j+1].getColor()) && (board[i][j].getColor() == board[i+1][j+2].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i-1][j+1]-[i-1][j+2]
+        for(int i = 1; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-2; j++) {
+                if ((board[i][j].getColor() == board[i-1][j+1].getColor()) && (board[i][j].getColor() == board[i+1][j+2].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // Check for 3x2
+        // check the pattern [i][j]-[i+1][j+1]-[i+2][j]
+        for(int i = 0; i < SIZE-2; i++) {
+            for(int j = 0; j<SIZE-1; j++) {
+                if ((board[i][j].getColor() == board[i+1][j+1].getColor()) && (board[i][j].getColor() == board[i+2][j].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+1][j-1]-[i+2][j]
+        for(int i = 0; i < SIZE-2; i++) {
+            for(int j = 1; j<SIZE; j++) {
+                if ((board[i][j].getColor() == board[i-1][j-1].getColor()) && (board[i][j].getColor() == board[i+2][j].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+1][j]-[i+2][j+1]
+        for(int i = 0; i < SIZE-2; i++) {
+            for(int j = 0; j<SIZE-1; j++) {
+                if ((board[i][j].getColor() == board[i+1][j].getColor()) && (board[i][j].getColor() == board[i+2][j+1].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+1][j+1]-[i+2][j+1]
+        for(int i = 0; i < SIZE-2; i++) {
+            for(int j = 0; j<SIZE-1; j++) {
+                if ((board[i][j].getColor() == board[i+1][j+1].getColor()) && (board[i][j].getColor() == board[i+2][j+1].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+1][j]-[i+2][j-1]
+        for(int i = 0; i < SIZE-2; i++) {
+            for(int j = 1; j<SIZE; j++) {
+                if ((board[i][j].getColor() == board[i+1][j].getColor()) && (board[i][j].getColor() == board[i+2][j-1].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+1][j-1]-[i+2][j-1]
+        for(int i = 0; i < SIZE-2; i++) {
+            for(int j = 1; j<SIZE; j++) {
+                if ((board[i][j].getColor() == board[i+1][j-1].getColor()) && (board[i][j].getColor() == board[i+2][j-1].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // Check 4x1
+        // check the pattern [i][j]-[i][j+1]-[i][j+3]
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-3; j++) {
+                if ((board[i][j].getColor() == board[i][j+1].getColor()) && (board[i][j].getColor() == board[i][j+3].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i][j+2]-[i][j+3]
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-3; j++) {
+                if ((board[i][j].getColor() == board[i][j+2].getColor()) && (board[i][j].getColor() == board[i][j+3].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // Check 1x4
+
+        // check the pattern [i][j]-[i+1][j]-[i+3][j]
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-3; j++) {
+                if ((board[i][j].getColor() == board[i+1][j].getColor()) && (board[i][j].getColor() == board[i+3][j].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        // check the pattern [i][j]-[i+2][j]-[i+3][j]
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j<SIZE-3; j++) {
+                if ((board[i][j].getColor() == board[i+2][j].getColor()) && (board[i][j].getColor() == board[i+3][j].getColor())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void moveDown(int step) {
+        for (int i = SIZE-1; i >=step; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                int k=0;
+                if(board[i][j].getColor() == -1) {
+                    board[i][j].swap(board[i-step][j]);
+                }
+            }
+        }
+
+        for (int i = SIZE-1; i >=0; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                if(board[i][j].getColor() == -1) {
+                    board[i][j].setColor(rand.nextInt(4));
+                }
+            }
+        }
+    }
+
+    public void moveDownPos(int step) {
+        for (int i = SIZE-1; i >=step; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                int k=0;
+                if(board[i][j].getColor() == -1) {
+                    board[i][j].swap(board[i-step][j]);
+                }
+            }
+        }
+
+        for (int i = SIZE-1; i >=0; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                if(board[i][j].getColor() == -1) {
+                    board[i][j].setColor(rand.nextInt(4));
+                }
+            }
+        }
+    }
