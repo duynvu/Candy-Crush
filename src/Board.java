@@ -1,3 +1,5 @@
+package gui;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,8 +11,10 @@ import java.util.Scanner;
 import javax.swing.*;
 
 
-public class Board extends JPanel implements MouseListener, ActionListener {
-    private final int SIZE = 8;
+public class Board extends JPanel {
+    Main main;
+
+    public static final int SIZE = 8;
     private final int SIZEOFPIC = 70;
     private final int SIZESPACE = 75;
     private Candy[][] board = new Candy[SIZE][SIZE];
@@ -19,51 +23,72 @@ public class Board extends JPanel implements MouseListener, ActionListener {
 
     int i1, i2, i3, i4;
     int s1, s2;
-    static int count = 0;
     Random rand = new Random();
 
-    int x, y;
+    boolean check;
 
-    private Timer timer;
-    private int delay = 100;
-
-    public Board() {
+    public Board(Main main) {
+        /* Input: Main game
+        Output: create Board and checkTrue.
+         */
+        this.main = main;
         create();
         while (checkTrue()) {}
         printBoard();
         System.out.println("Ready to get input.");
-        addMouseListener(this);
-        //setFocusable(true);
-        //timer = new Timer(delay, this);
-        //timer.start();
     }
 
-    public void test() {
-        while (true) {
-            getInput();
-            swap(s1, s2);
-            printBoard();
+    public Candy getCandy(int row, int column) {
+        /* Input: row and column of candy
+        Output: return candy at the correlative position on the board.
+         */
+        return board[row][column];
+    }
+
+    public void moveBoard(int speedx, int speedy) {
+        /*
+        Input: speedx and speedy
+        Output: move the board by the given speed for each Candy in the board
+         */
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                board[i][j].moveCandy(speedx,speedy);
+            }
         }
     }
 
-    public void play() {
-        while (!checkEndGame()) {
-            getInput();
-            swap(s1, s2);
-            if (!checkTrue()) {
-                swap(s1, s2);
-                System.out.println("Wrong Candy");
+    public boolean checkMovingDown() {
+        /*
+        Output: return True if we have to move down some candies
+                return False if all the candies is in right position.
+         */
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j].checkRightPosition()!=0)
+                    return true;
             }
-            while (checkTrue()) {
-            }
-            System.out.println("New board");
-            printBoard();
-            repaint();
         }
-        System.out.println("Game Over");
+        return false;
     }
+
+    public void movingDown(int speedx, int speedy) {        /*
+        Input: speedx and speedy
+        Output: move the board by the given speed for candy which is not in right position of it
+        according to x and y
+         */
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j].checkRightPosition()!=0)
+                    board[i][j].moveCandy(speedx, speedy*board[i][j].checkRightPosition());
+            }
+        }
+    }
+
 
     private void create() {
+        /*
+        Output: create the board with SIZE, each candy has its x and y, and color(using Random)
+         */
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 Candy candy = new Candy(rand.nextInt(4), i, j);
@@ -73,6 +98,10 @@ public class Board extends JPanel implements MouseListener, ActionListener {
     }
 
     public void printBoard() {
+        /*
+        Output: print the board to check the color of the candy in the board
+         */
+        System.out.println();
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 System.out.print(board[i][j].getColor() + "  ");
@@ -81,11 +110,48 @@ public class Board extends JPanel implements MouseListener, ActionListener {
         }
     }
 
-    public void swap(int p1, int p2) {
-        board[p1 / SIZE][p1 % SIZE].swap(board[p2 / SIZE][p2 % SIZE]);
+    public void swap(int x1,int y1, int x2, int y2) {
+        /*
+        Input: Cordinate of 2 candy
+        Output: Change the candy of 2 slot of the board.
+         */
+
+        Candy tempCandy = board[x1][y1];
+        board[x1][y1] = board[x2][y2];
+        board[x2][y2] = tempCandy;
     }
 
+    public void swapInPos(int x1,int y1, int x2, int y2) {
+        /*
+        Input: Cordinate of 2 candy
+        Output: Change the candy of 2 slot of the board.
+         */
+
+//        Candy tempCandy1 = board[x1][y1];
+//        Candy tempCandy2 = board[x2][y2];
+//        tempCandy1.xpos = tempCandy2.xpos;
+//        tempCandy1.ypos = tempCandy2.ypos;
+//        tempCandy2.xpos = board[x1][y1].xpos;
+//        tempCandy2.ypos = board[x1][y1].ypos;
+//        board[x1][y1] = tempCandy2;
+//        board[x2][y2] = tempCandy1;
+
+        board[x1][y1].swap(board[x2][y2]);
+        int temp = board[x1][y1].ypos;
+        board[x1][y1].ypos = board[x2][y2].ypos;
+        board[x2][y2].ypos = temp;
+
+    }
+
+
     public boolean checkTrue() {
+        /*
+        Check the board when we creat() because it may give many true positions.
+        checkTrue() eliminates these positions.
+
+        Output: return True if it changes the board.
+                return False if it doesn't change the board. (means: the board is ready to play)
+         */
         //Check vertical
         for (int i = 0; i < SIZE - 2; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -140,6 +206,7 @@ public class Board extends JPanel implements MouseListener, ActionListener {
                     }
                     board[i][k].setColor(-1);
                     moveDown(1);
+
                     return true;
                 }
             }
@@ -147,7 +214,13 @@ public class Board extends JPanel implements MouseListener, ActionListener {
         return false;
     }
 
-    public boolean checkPosition(int row, int column) {
+    public boolean checkPosition(int row, int column) throws InterruptedException {
+        /*
+        Input: The cordinate of the candy.
+        Output: Check at the this position, whether it has true horizontal or true vertical,
+        then eliminate these positions.
+         */
+
         int countVertical = 0, countHorizontal = 0;
         int[] listVertical = new int[SIZE];
         int[] listHorizontal = new int[SIZE];
@@ -209,7 +282,8 @@ public class Board extends JPanel implements MouseListener, ActionListener {
             for(int j=0; j<countHorizontal; j++) {
                 board[listHorizontal[j]/SIZE][listHorizontal[j]%SIZE].setColor(-1);
             }
-            moveDown(1);
+            moveDownPos(1);
+            //main.movingDownPaint();
             return true;
         }
 
@@ -219,18 +293,26 @@ public class Board extends JPanel implements MouseListener, ActionListener {
             for(int j=0; j<countVertical; j++) {
                 board[listVertical[j]/SIZE][listVertical[j]%SIZE].setColor(-1);
             }
-            moveDown(countVertical+1);
+            moveDownPos(countVertical+1);
+            //main.movingDownPaint();
             return true;
         }
         return false;
     }
 
     public void moveDown(int step) {
+        /*
+        Input: The step to move the board down
+
+        Check the board where its color is -1 and move upper candies down to eliminated positions.
+        creat the new candy for slots in the board which has its color is -1
+         */
         for (int i = SIZE-1; i >=step; i--) {
             for (int j = SIZE-1; j>=0; j--) {
                 int k=0;
                 if(board[i][j].getColor() == -1) {
                     board[i][j].swap(board[i-step][j]);
+                    //swap(i, j, i-step, j);
                 }
             }
         }
@@ -238,11 +320,43 @@ public class Board extends JPanel implements MouseListener, ActionListener {
         for (int i = SIZE-1; i >=0; i--) {
             for (int j = SIZE-1; j>=0; j--) {
                 if(board[i][j].getColor() == -1) {
-                    board[i][j].setColor(rand.nextInt(4));
+                    board[i][j] = new Candy(rand.nextInt(4), i, j);
                 }
             }
         }
     }
+
+    public void moveDownPos(int step) throws InterruptedException {
+        /*
+        Input: The step to move the board down
+
+        Check the board where its color is -1 and move upper candies down to eliminated positions.
+        creat the new candy for slots in the board which has its color is -1
+         */
+        for (int i = SIZE-1; i >=step; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                int k=0;
+                if(board[i][j].getColor() == -1) {
+                    //board[i][j].swap(board[i-step][j]);
+                    swapInPos(i, j, i-step, j);
+                    printBoard();
+                    System.out.println();
+                }
+            }
+        }
+        //main.movingDownPaint();
+
+        for (int i = SIZE-1; i >=0; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                if(board[i][j].getColor() == -1) {
+                    board[i][j] = new Candy(rand.nextInt(4), i, j);
+                    board[i][j].ypos+=(step*SIZESPACE+150);
+                }
+            }
+        }
+        main.movingDownPaint();
+    }
+
 
     public void getInput() {
         Scanner scan = new Scanner(System.in);
@@ -262,6 +376,11 @@ public class Board extends JPanel implements MouseListener, ActionListener {
     }
 
     public boolean checkEndGame() {
+        /*
+        Check if player can make any moves or not.
+        Output: return true if player can't play anymore.
+                return false if player can play
+         */
         // Check for 2x3
         // check the pattern [i][j]-[i+1][j+1]-[i][j+2]
         for(int i = 0; i < SIZE-1; i++) {
@@ -414,78 +533,21 @@ public class Board extends JPanel implements MouseListener, ActionListener {
         return true;
     }
 
-    public void paint(Graphics g) {
+    public void paint(Graphics2D g2d) {
         //draw blackground
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, 900, 900);
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, 900, 900);
 
         //draw background picture
         backGround = new ImageIcon("background.jpg");
-        backGround.paintIcon(this, g,0, 0);
+        backGround.paintIcon(this, g2d,0, 0);
+        g2d.setColor(new Color(0, 0, 70, 100));
+        g2d.fillRoundRect(30, 20, 600, 600, 30, 30);
 
         for(int i=0; i<SIZE; i++) {
             for(int j = 0; j<SIZE; j++) {
-                board[i][j].paintCandy(g);
+                board[i][j].paintCandy(g2d);
             }
         }
     }
-
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        timer.start();
-
-    }
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        System.out.println("Clicked");
-        x = (e.getY()-20)/SIZESPACE;
-        y = (e.getX()-30)/SIZESPACE;
-        if(count==0) {
-            i1 = (e.getY()-20)/SIZESPACE;
-            i2 = (e.getX()-30)/SIZESPACE;
-            count++;
-            System.out.println("first choose");
-            System.out.println(count+ " "+x +" "+y);
-        }
-        else {
-            i3 = (e.getY()-20)/SIZESPACE;
-            i4 = (e.getX()-30)/SIZESPACE;
-            s1 = i1*SIZE+i2;
-            s2 = i3*SIZE+i4;
-            swap(s1,s2);
-            count=0;
-            System.out.println("Swap1");
-            if(checkPosition(i1,i2)) {
-                System.out.println("Pos1 true");
-            }
-            if(checkPosition(i3,i4)) {
-                System.out.println("Pos2 true");
-            }
-            while(checkTrue()) {
-                System.out.println("new");
-                printBoard();
-            }
-            repaint();
-            System.out.println(count+ " "+x +" "+y+" "+s1+" "+s2);
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        System.out.print("Enter" );
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
 }
