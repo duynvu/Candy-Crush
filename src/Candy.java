@@ -1,3 +1,6 @@
+package gui;
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -37,6 +40,14 @@ public class Candy extends JPanel {
         }
         else
             return -1;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     public void moveCandy(int speedx, int speedy) {

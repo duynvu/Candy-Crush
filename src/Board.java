@@ -1,3 +1,5 @@
+package gui;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -82,7 +84,6 @@ public class Board extends JPanel {
         }
     }
 
-
     private void create() {
         /*
         Output: create the board with SIZE, each candy has its x and y, and color(using Random)
@@ -106,6 +107,14 @@ public class Board extends JPanel {
             }
             System.out.println();
         }
+        System.out.println();
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                System.out.print("("+board[i][j].getx() + ","+board[i][j].gety()+") ");
+            }
+            System.out.println();
+        }
+
     }
 
     public void swap(int x1,int y1, int x2, int y2) {
@@ -113,10 +122,18 @@ public class Board extends JPanel {
         Input: Cordinate of 2 candy
         Output: Change the candy of 2 slot of the board.
          */
-
         Candy tempCandy = board[x1][y1];
         board[x1][y1] = board[x2][y2];
+        board[x1][y1].setX(x1);
+        board[x1][y1].setY(y1);
         board[x2][y2] = tempCandy;
+        board[x2][y2].setX(x2);
+        board[x2][y2].setY(y2);
+//        board[x1][y1].swap(board[x2][y2]);
+//        int temp = board[x1][y1].ypos;
+//        board[x1][y1].ypos = board[x2][y2].ypos;
+//        board[x2][y2].ypos = temp;
+
     }
 
     public void swapInPos(int x1,int y1, int x2, int y2) {
@@ -135,10 +152,21 @@ public class Board extends JPanel {
 //        board[x2][y2] = tempCandy1;
 
         board[x1][y1].swap(board[x2][y2]);
-        int temp = board[x1][y1].ypos;
+        int tempx = board[x1][y1].getXpos();
+        int tempy = board[x1][y1].getYpos();
+        board[x1][y1].xpos = board[x2][y2].xpos;
         board[x1][y1].ypos = board[x2][y2].ypos;
-        board[x2][y2].ypos = temp;
+        board[x1][y1].xpos = tempx;
+        board[x2][y2].ypos = tempy;
 
+//        Candy tempCandy = board[x1][y1];
+//        board[x1][y1] = board[x2][y2];
+//        board[x1][y1].setX(x2);
+//        board[x1][y1].setY(y2);
+//        board[x2][y2] = tempCandy;
+//        board[x2][y2].setX(x1);
+//        board[x2][y2].setY(y1);
+//
     }
 
 
@@ -204,6 +232,7 @@ public class Board extends JPanel {
                     }
                     board[i][k].setColor(-1);
                     moveDown(1);
+                    //moveDownPos1();
 
                     return true;
                 }
@@ -212,7 +241,31 @@ public class Board extends JPanel {
         return false;
     }
 
-    public boolean checkPosition(int row, int column) throws InterruptedException {
+    public boolean checkTruePos() throws InterruptedException {
+        /*
+        Check the board when we creat() because it may give many true positions.
+        checkTrue() eliminates these positions.
+
+        Output: return True if it changes the board.
+                return False if it doesn't change the board. (means: the board is ready to play)
+         */
+        boolean c=false;
+        //Check vertical
+        for (int i = SIZE-1; i >=0; i--) {
+            for (int j = SIZE-1; j >= 0; j--) {
+                if(checkPosition(i,j)) {
+                    moveDownPos1();
+                    main.movingDownPaint();
+                    c=true;
+                }
+            }
+        }
+        return c;
+    }
+
+
+
+    public boolean checkPosition(int row, int column) {
         /*
         Input: The cordinate of the candy.
         Output: Check at the this position, whether it has true horizontal or true vertical,
@@ -280,7 +333,7 @@ public class Board extends JPanel {
             for(int j=0; j<countHorizontal; j++) {
                 board[listHorizontal[j]/SIZE][listHorizontal[j]%SIZE].setColor(-1);
             }
-            moveDownPos(1);
+            //moveDownPos(1);
             //main.movingDownPaint();
             return true;
         }
@@ -291,7 +344,7 @@ public class Board extends JPanel {
             for(int j=0; j<countVertical; j++) {
                 board[listVertical[j]/SIZE][listVertical[j]%SIZE].setColor(-1);
             }
-            moveDownPos(countVertical+1);
+            //moveDownPos(countVertical+1);
             //main.movingDownPaint();
             return true;
         }
@@ -337,7 +390,7 @@ public class Board extends JPanel {
                 if(board[i][j].getColor() == -1) {
                     //board[i][j].swap(board[i-step][j]);
                     swapInPos(i, j, i-step, j);
-                    printBoard();
+                    //printBoard();
                     System.out.println();
                 }
             }
@@ -348,12 +401,68 @@ public class Board extends JPanel {
             for (int j = SIZE-1; j>=0; j--) {
                 if(board[i][j].getColor() == -1) {
                     board[i][j] = new Candy(rand.nextInt(4), i, j);
-                    board[i][j].ypos+=(step*SIZESPACE+150);
+                    board[i][j].ypos+=((SIZE-step)*SIZESPACE+35);
                 }
             }
         }
         main.movingDownPaint();
     }
+
+    public void moveDownPos1() {
+        /*
+        Input: The step to move the board down
+
+        Check the board where its color is -1 and move upper candies down to eliminated positions.
+        creat the new candy for slots in the board which has its color is -1
+         */
+        int[] a = new int[SIZE];
+        for(int i=0; i<SIZE; i++) {
+            a[i]=0;
+        }
+
+        for (int i = SIZE-1; i >=1; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                int k=0;
+                if(board[i][j].getColor() == -1) {
+                    int step = 1;
+                    while(board[i-step][j].getColor() == -1) {
+                        if(i-step>0) {
+                            step++;
+                        }
+                        if(i-step==0) {
+                            if(board[i-step][j].getColor()==-1) {
+                                step = -1; //no available candy above ==> no need to swap
+                                break;
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                    }
+                    if (step!=-1) {
+                        if(a[j]==0) {
+                            a[j]=step;
+                        }
+                        swapInPos(i, j, i - step, j);
+                    }
+                    //printBoard();
+                    System.out.println();
+                }
+            }
+        }
+        //main.movingDownPaint();
+
+        for (int i = SIZE-1; i >=0; i--) {
+            for (int j = SIZE-1; j>=0; j--) {
+                if(board[i][j].getColor() == -1) {
+                    board[i][j] = new Candy(rand.nextInt(4), i, j);
+                    board[i][j].ypos+=((SIZE-a[j])*SIZESPACE+35);
+                }
+            }
+        }
+        //main.movingDownPaint();
+    }
+
 
 
     public void getInput() {
@@ -539,6 +648,7 @@ public class Board extends JPanel {
         //draw background picture
         backGround = new ImageIcon("background.jpg");
         backGround.paintIcon(this, g2d,0, 0);
+
         g2d.setColor(new Color(0, 0, 70, 100));
         g2d.fillRoundRect(30, 20, 600, 600, 30, 30);
 

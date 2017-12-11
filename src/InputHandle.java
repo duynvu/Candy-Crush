@@ -1,3 +1,5 @@
+package gui;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -49,12 +51,12 @@ public class InputHandle implements MouseListener {
             count = 0;
             x2 = (e.getY()-20)/Candy.SIZESPACE;
             y2 = (e.getX()-30)/Candy.SIZESPACE;
-            x2pos = 30 + y2 * Candy.SIZESPACE;
-            y2pos = 20 + x2 * Candy.SIZESPACE;
-            System.out.println(x1+" "+y1+ " "+x2+ " "+y2);
-            System.out.println(x2+ " " + y2);
-            //System.out.println("---"+x1+" "+y1+ " "+x2+ " "+y2);
-            changing = true;
+            //if((x2==x1&&y2==y1+1)||(x2==x1&&y2==y1-1)||(x2==x1+1&&y2==y1)||(x2==x1-1&&y2==y1)) {
+                x2pos = 30 + y2 * Candy.SIZESPACE;
+                y2pos = 20 + x2 * Candy.SIZESPACE;
+                System.out.println(x1+" "+y1+ " "+x2+ " ti"+y2);
+                changing = true;
+            //}
         }
     }
 
