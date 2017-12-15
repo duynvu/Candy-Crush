@@ -1,6 +1,5 @@
 package gui;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -58,21 +57,6 @@ public class Main extends JPanel {
         board.getCandy(input.x2, input.y2).moveCandy(-(input.x1pos-input.x2pos)/15,-(input.y1pos-input.y2pos)/15);
     }
 
-    public void firstPaint() throws InterruptedException {
-        int i = 0;
-        while(true) {
-            if(i<350) {
-                this.moveFirst();
-                System.out.print(" Continue "+ i+ " ");
-                this.repaint();
-                Thread.sleep(3);
-                i++;
-            }
-            else
-                break;
-        }
-    }
-
     public void moveFirst() {
         //System.out.print("Move ");
         board.moveBoard(0,2);
@@ -117,13 +101,8 @@ public class Main extends JPanel {
 
         main.movingDownPaint();
 
-        while(true) {
-//            if (main.isChanging()) {
-//                main.moveTwoCandy();
-//                main.repaint();
-//                Thread.sleep(10);
-//                main.board.printBoard();
-//            }
+        while(true && !main.board.checkEndGame()) {
+            boolean success = false;
             if (main.isChanging()) {
                 System.out.println("");
                 main.board.swap(InputHandle.x1, InputHandle.y1, InputHandle.x2, InputHandle.y2);
@@ -140,28 +119,41 @@ public class Main extends JPanel {
 
             if(main.board.check) {
                 if(main.board.checkPosition(main.input.x1, main.input.y1)) {
-                    main.board.moveDownPos1();
+                    main.board.moveDownPos();
                     main.movingDownPaint();
                     main.board.printBoard();
                     //main.repaint();
                     //main.movingDownPaint();
                     System.out.println("Pos1 true");
+                    success = true;
                 }
 
                 if(main.board.checkPosition(main.input.x2, main.input.y2)) {
-                    main.board.moveDownPos1();
+                    main.board.moveDownPos();
                     main.movingDownPaint();
                     main.board.printBoard();
                     //main.repaint();
                     //main.movingDownPaint();
                     System.out.println("Pos2 true");
+                    success = true;
                 }
 
                 //main.movingDownPaint();
                 while(main.board.checkTruePos()) {}
                 main.board.check = false;
-            }
 
+                if(!success) {
+                    main.board.check = false;
+                    main.board.swap(InputHandle.x1, InputHandle.y1, InputHandle.x2, InputHandle.y2);
+                    while ((main.board.getCandy(main.input.x1, main.input.y1).xpos != main.input.x1pos) || (main.board.getCandy(main.input.x1, main.input.y1).ypos != main.input.y1pos)) {
+                        main.moveTwoCandy();
+                        main.repaint();
+                        Thread.sleep(10);
+                    }
+                    success = false;
+
+                }
+            }
         }
     }
 }

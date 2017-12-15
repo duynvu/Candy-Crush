@@ -32,13 +32,6 @@ public class InputHandle implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-//        x1 = x2; x1pos = x2pos;
-//        y1 = y2; y1pos = y2pos;
-//        x2 = (e.getY()-20)/Candy.SIZESPACE;
-//        y2 = (e.getX()-30)/Candy.SIZESPACE;
-//        x2pos = 30 + y2 * Candy.SIZESPACE;
-//        y2pos = 20 + x2 * Candy.SIZESPACE;
-
         if(count==0) {
             count++;
             x1 = (e.getY()-20)/Candy.SIZESPACE;
@@ -46,17 +39,21 @@ public class InputHandle implements MouseListener {
             x1pos = 30 + y1 * Candy.SIZESPACE;
             y1pos = 20 + x1 * Candy.SIZESPACE;
             System.out.print(x1+ " " + y1+" ");
+
         }
         else {
             count = 0;
             x2 = (e.getY()-20)/Candy.SIZESPACE;
             y2 = (e.getX()-30)/Candy.SIZESPACE;
-            //if((x2==x1&&y2==y1+1)||(x2==x1&&y2==y1-1)||(x2==x1+1&&y2==y1)||(x2==x1-1&&y2==y1)) {
+            if((x2==x1&&y2==y1+1)||(x2==x1&&y2==y1-1)||(x2==x1+1&&y2==y1)||(x2==x1-1&&y2==y1)) {
                 x2pos = 30 + y2 * Candy.SIZESPACE;
                 y2pos = 20 + x2 * Candy.SIZESPACE;
                 System.out.println(x1+" "+y1+ " "+x2+ " ti"+y2);
                 changing = true;
-            //}
+            }
+            else {
+                System.out.println("can't choose");
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class Candy extends JPanel {
     private final int SIZE = 8;
@@ -87,9 +86,6 @@ public class Candy extends JPanel {
     }
 
     public void paintCandy(Graphics2D g) {
-        //System.out.println("paint " + xpos + ", " + ypos);
-//        g.setColor(new Color(0, 0, 70, 100));
-//        g.fillRoundRect(xpos, ypos, 70, 70, 30, 30);
         switch (color) {
             case 0:
                 redCandy.paintIcon(this, g, xpos, ypos);
